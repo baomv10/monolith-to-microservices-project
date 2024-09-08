@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/app
     docker:
-      - image: cimg/node:current
+      - image: cimg/node:13.0
         auth:
           username: $DOCKER_USERNAME
           password: $DOCKER_PASSWORD
