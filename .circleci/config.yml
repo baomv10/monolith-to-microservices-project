@@ -1,0 +1,30 @@
+version: 2.1
+jobs:
+  build:
+    working_directory: ~/app
+    docker:
+      - image: cimg/node:current
+        auth:
+          username: $DOCKER_USERNAME
+          password: $DOCKER_PASSWORD
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build Docker image
+          command: |
+            TAG=$CIRCLE_BUILD_NUM
+            docker build -t $DOCKER_USERNAME/udagram-frontend:$TAG udagram-api-frontend
+            docker build -t $DOCKER_USERNAME/udagram-api-feed:$TAG udagram-api-feed
+            docker build -t $DOCKER_USERNAME/udagram-api-user:$TAG udagram-api-user
+            docker build -t $DOCKER_USERNAME/udagram-reverseproxy:$TAG udagram-reverseproxy
+      - run:
+          name: Push application Docker image
+          command: |
+            TAG=$CIRCLE_BUILD_NUM
+            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            docker push $DOCKER_USERNAME/udagram-api-feed:$TAG
+            docker push $DOCKER_USERNAME/udagram-api-user:$TAG
+            docker push $DOCKER_USERNAME/dagram-reverseproxy:$TAG
+            docker push $DOCKER_USERNAME/udagram-frontend:$TAG
