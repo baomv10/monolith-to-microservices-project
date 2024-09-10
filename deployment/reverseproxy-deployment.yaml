@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: reverseproxy
+  name: reverseproxy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      service: reverseproxy
+  template:
+    metadata:
+      labels:
+        service: reverseproxy
+      name: reverseproxy
+    spec:
+      containers:
+        - image: baomv/udagram-reverseproxy:latest
+          name: reverseproxy
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: "250m"
+            limits:
+              cpu: "500m"
+          ports:
+            - containerPort: 80
+      restartPolicy: Always
